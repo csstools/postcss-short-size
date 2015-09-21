@@ -1,0 +1,11 @@
+a {
+	size: 20px 10px;
+}
+
+b {
+	size: calc(4 * 2px) 2px;
+}
+
+c {
+	size: fit-content auto;
+}
