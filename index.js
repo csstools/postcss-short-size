@@ -1,50 +1,77 @@
-var postcss = require('postcss');
+// tooling
+const postcss = require('postcss');
 
-var aspectRatioRE = /^([-+]?[0-9]*\.?[0-9]+)\/([-+]?[0-9]*\.?[0-9]+)$/;
-var lengthRE = /^([-+]?0|[-+]?[0-9]*\.?[0-9]+)(%|\w+)$/;
+// length matcher
+const lengthRE = /^([-+]?0|[-+]?[0-9]*\.?[0-9]+)(%|\w+)$/;
 
-module.exports = postcss.plugin('postcss-short-size', function (opts) {
-	var prefix = opts && opts.prefix ? '-' + opts.prefix + '-' : '';
+// aspect ratio matcher
+const aspectRatioRE = /^([-+]?[0-9]*\.?[0-9]+)\/([-+]?[0-9]*\.?[0-9]+)$/;
 
-	var sizeDeclarationRE = new RegExp('^' + prefix + '(max-|min-)?size$');
+// plugin
+module.exports = postcss.plugin('postcss-short-size', ({
+	prefix = '',
+	skip   = '*'
+}) => {
+	// dashed prefix
+	const dashedPrefix = prefix ? '-' + prefix + '-' : '';
 
-	return function (css) {
-		css.walkDecls(sizeDeclarationRE, function (decl) {
-			var name = prefix ? decl.prop.slice(prefix.length, -4) : decl.prop.slice(0, -4);
-			var size = postcss.list.space(decl.value);
+	// property pattern
+	const propertyMatch = new RegExp(`^${ dashedPrefix }(max-|min-)?size$`);
 
-			if (size.length) {
-				var width  = size[0];
-				var widthLength = width.match(lengthRE);
-				var widthAspectRatio  = width.match(aspectRatioRE);
+	return (css) => {
+		// walk each matching declaration
+		css.walkDecls(propertyMatch, (decl) => {
+			// min-max property
+			const minmax = decl.prop.match(propertyMatch)[1] || '';
 
-				var height = size[1] || size[0];
-				var heightLength = height.match(lengthRE);
-				var heightAspectRatio = height.match(aspectRatioRE);
+			// space-separated values (width, height)
+			const values = postcss.list.space(decl.value);
 
-				if (widthAspectRatio && heightLength) {
-					width = heightLength[1] / widthAspectRatio[2] * widthAspectRatio[1] + heightLength[2];
-				}
+			// width is the first value
+			let width = values[0];
 
-				if (heightAspectRatio && widthLength) {
-					height = widthLength[1] / heightAspectRatio[1] * heightAspectRatio[2] + widthLength[2];
-				}
+			// whether the width matches a length or aspect ratio
+			const widthLength = width.match(lengthRE);
+			const widthAspectRatio = width.match(aspectRatioRE);
 
-				if (height !== '*') {
-					decl.cloneAfter({
-						prop:  name + 'height',
-						value: height
-					});
-				}
+			// height is the second value
+			let height = values[1] || values[0];
 
-				if (width !== '*') {
-					decl.cloneAfter({
-						prop:  name + 'width',
-						value: width
-					});
-				}
+			// whether the height matches a length or aspect ratio
+			const heightLength = height.match(lengthRE);
+			const heightAspectRatio = height.match(aspectRatioRE);
+
+			// if the width is an aspect ratio and the height is a length
+			if (widthAspectRatio && heightLength) {
+				// update the width
+				width = heightLength[1] / widthAspectRatio[2] * widthAspectRatio[1] + heightLength[2];
 			}
 
+			// if the height is an aspect ratio and the width is a length
+			if (heightAspectRatio && widthLength) {
+				// update the height
+				height = widthLength[1] / heightAspectRatio[1] * heightAspectRatio[2] + widthLength[2];
+			}
+
+			// if the width is not a skip token
+			if (width !== skip) {
+				// create a new declaration for the width
+				decl.cloneBefore({
+					prop:  minmax + 'width',
+					value: width
+				});
+			}
+
+			// if the height is not a skip token
+			if (height !== skip) {
+				// create a new declaration for the height
+				decl.cloneBefore({
+					prop:  minmax + 'height',
+					value: height
+				});
+			}
+
+			// remove the original size declaration
 			decl.remove();
 		});
 	};

@@ -1,8 +1,15 @@
-## 1.1.0 (2015-03-05)
+# Changes to Size Shorthand
 
-Added: Support for aspect-ratio as partial value
-Updated: Tests
+### 2.0.0 (December 6, 2016)
 
-## 1.0.0 (2015-09-21)
+- Added: Define `skip` token
+- Updated: boilerplate conventions (Node v6.9.1 LTS)
 
-Added: Initial version
+### 1.1.0 (March 5, 2015)
+
+- Added: Support for aspect-ratio as partial value
+- Updated: Tests
+
+### 1.0.0 (September 21, 2015)
+
+- Added: Initial version
