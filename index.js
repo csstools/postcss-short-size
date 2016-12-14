@@ -11,9 +11,9 @@ const aspectRatioRE = /^([-+]?[0-9]*\.?[0-9]+)\/([-+]?[0-9]*\.?[0-9]+)$/;
 module.exports = postcss.plugin('postcss-short-size', ({
 	prefix = '',
 	skip   = '*'
-}) => {
+} = {}) => {
 	// dashed prefix
-	const dashedPrefix = prefix ? '-' + prefix + '-' : '';
+	const dashedPrefix = prefix ? `-${ prefix }-` : '';
 
 	// property pattern
 	const propertyMatch = new RegExp(`^${ dashedPrefix }(max-|min-)?size$`);
@@ -57,7 +57,7 @@ module.exports = postcss.plugin('postcss-short-size', ({
 			if (width !== skip) {
 				// create a new declaration for the width
 				decl.cloneBefore({
-					prop:  minmax + 'width',
+					prop:  `${ minmax }width`,
 					value: width
 				});
 			}
@@ -66,7 +66,7 @@ module.exports = postcss.plugin('postcss-short-size', ({
 			if (height !== skip) {
 				// create a new declaration for the height
 				decl.cloneBefore({
-					prop:  minmax + 'height',
+					prop:  `${ minmax }height`,
 					value: height
 				});
 			}
@@ -76,3 +76,10 @@ module.exports = postcss.plugin('postcss-short-size', ({
 		});
 	};
 });
+
+// override plugin#process
+module.exports.process = function (cssString, pluginOptions, processOptions) {
+	return postcss([
+		0 in arguments ? module.exports(pluginOptions) : module.exports()
+	]).process(cssString, processOptions);
+};
