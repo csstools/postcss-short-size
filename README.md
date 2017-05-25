@@ -1,10 +1,9 @@
-# Size Shorthand <a href="https://github.com/postcss/postcss"><img src="https://postcss.github.io/postcss/logo.svg" alt="PostCSS Logo" width="90" height="90" align="right"></a>
+# Size Shorthand [<img src="https://postcss.github.io/postcss/logo.svg" alt="PostCSS Logo" width="90" height="90" align="right">][postcss]
 
 [![NPM Version][npm-img]][npm-url]
 [![Build Status][cli-img]][cli-url]
-[![Licensing][lic-image]][lic-url]
-[![Changelog][log-image]][log-url]
-[![Gitter Chat][git-image]][git-url]
+[![Windows Build Status][win-img]][win-url]
+[![Gitter Chat][git-img]][git-url]
 
 [Size Shorthand] lets you use `size` properties to represent `width` and `height` in CSS, following the [1-to-2 syntax].
 
@@ -12,23 +11,23 @@
 /* before */
 
 .example-1 {
-	size: 100px;
+  size: 100px;
 }
 
 .example-2 {
-	max-size: 400px 300px;
+  max-size: 400px 300px;
 }
 
 /* after */
 
 .example-1 {
-	width: 100px;
-	height: 100px;
+  width: 100px;
+  height: 100px;
 }
 
 .example-2 {
-	max-width: 400px;
-	max-height: 300px;
+  max-width: 400px;
+  max-height: 300px;
 }
 ```
 
@@ -38,23 +37,23 @@ Use an aspect ratio to denote the proportion between width and height.
 /* before */
 
 .example-1 {
-	size: 16/9 1080px;
+  size: 16/9 1080px;
 }
 
 .example-2 {
-	size: 400px 4/3;
+  size: 400px 4/3;
 }
 
 /* after */
 
 .example-1 {
-	width: 1920px;
-	height: 1080px;
+  width: 1920px;
+  height: 1080px;
 }
 
 .example-2 {
-	width: 400px;
-	height: 300px;
+  width: 400px;
+  height: 300px;
 }
 ```
 
@@ -64,15 +63,15 @@ Use a skip token (`*`) to ignore specific lengths.
 /* before */
 
 .example-1 {
-	min-size: 1em *;
-	size: * 2.5em;
+  min-size: 1em *;
+  size: * 2.5em;
 }
 
 /* after */
 
 .example-1 {
-	min-width: 1em;
-	height: 2.5em;
+  min-width: 1em;
+  height: 2.5em;
 }
 ```
 
@@ -118,7 +117,7 @@ Load [Size Shorthand] as a PostCSS plugin:
 
 ```js
 postcss([
-	require('postcss-short-size')({ /* options */ })
+  require('postcss-short-size')({ /* options */ })
 ]).process(YOUR_CSS, /* options */);
 ```
 
@@ -136,13 +135,13 @@ Enable [Size Shorthand] within your Gulpfile:
 var postcss = require('gulp-postcss');
 
 gulp.task('css', function () {
-	return gulp.src('./src/*.css').pipe(
-		postcss([
-			require('postcss-short-size')({ /* options */ })
-		])
-	).pipe(
-		gulp.dest('.')
-	);
+  return gulp.src('./src/*.css').pipe(
+    postcss([
+      require('postcss-short-size')({ /* options */ })
+    ])
+  ).pipe(
+    gulp.dest('.')
+  );
 });
 ```
 
@@ -160,16 +159,16 @@ Enable [Size Shorthand] within your Gruntfile:
 grunt.loadNpmTasks('grunt-postcss');
 
 grunt.initConfig({
-	postcss: {
-		options: {
-			use: [
-				require('postcss-short-size')({ /* options */ })
-			]
-		},
-		dist: {
-			src: '*.css'
-		}
-	}
+  postcss: {
+    options: {
+      use: [
+        require('postcss-short-size')({ /* options */ })
+      ]
+    },
+    dist: {
+      src: '*.css'
+    }
+  }
 });
 ```
 
@@ -177,10 +176,8 @@ grunt.initConfig({
 [npm-img]: https://img.shields.io/npm/v/postcss-short-size.svg
 [cli-url]: https://travis-ci.org/jonathantneal/postcss-short-size
 [cli-img]: https://img.shields.io/travis/jonathantneal/postcss-short-size.svg
-[lic-url]: LICENSE.md
-[lic-image]: https://img.shields.io/npm/l/postcss-short-size.svg
-[log-url]: CHANGELOG.md
-[log-image]: https://img.shields.io/badge/changelog-md-blue.svg
+[win-url]: https://ci.appveyor.com/project/jonathantneal/postcss-short-size
+[win-img]: https://img.shields.io/appveyor/ci/jonathantneal/postcss-short-size.svg
 [git-url]: https://gitter.im/postcss/postcss
 [git-image]: https://img.shields.io/badge/chat-gitter-blue.svg
 
