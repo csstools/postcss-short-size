@@ -1,31 +1,17 @@
-'use strict';
+import postcss from 'postcss';
 
-// tooling
-const postcss = require('postcss');
-
-// length matcher
-const lengthRE = /^([-+]?0|[-+]?[0-9]*\.?[0-9]+)(%|\w+)$/;
-
-// aspect ratio matcher
-const aspectRatioRE = /^([-+]?[0-9]*\.?[0-9]+)\/([-+]?[0-9]*\.?[0-9]+)$/;
-
-// plugin
-module.exports = postcss.plugin('postcss-short-size', (opts) => {
-	// options
-	const prefix = opts && 'prefix' in opts ? opts.prefix : '';
-	const skip = opts && 'skip' in opts ? opts.skip : '*';
-
-	// dashed prefix
-	const dashedPrefix = prefix ? `-${ prefix }-` : '';
+export default postcss.plugin('postcss-short-size', opts => {
+	const prefix = 'prefix' in Object(opts) ? `-${opts.prefix}-` : '';
+	const skip = 'skip' in Object(opts) ? String(opts.skip) : '*';
 
 	// property pattern
-	const propertyMatch = new RegExp(`^${ dashedPrefix }(max-|min-)?size$`);
+	const sizePropertyRegExp = new RegExp(`^${prefix}((?:max|min)-)?size$`, 'i');
 
-	return (css) => {
-		// walk each matching declaration
-		css.walkDecls(propertyMatch, (decl) => {
+	return root => {
+		// for each size declaration
+		root.walkDecls(sizePropertyRegExp, decl => {
 			// min-max property
-			const minmax = decl.prop.match(propertyMatch)[1] || '';
+			const minmax = decl.prop.match(sizePropertyRegExp)[1] || '';
 
 			// space-separated values (width, height)
 			const values = postcss.list.space(decl.value);
@@ -34,42 +20,38 @@ module.exports = postcss.plugin('postcss-short-size', (opts) => {
 			let width = values[0];
 
 			// whether the width matches a length or aspect ratio
-			const widthLength = width.match(lengthRE);
-			const widthAspectRatio = width.match(aspectRatioRE);
+			const widthLength = width.match(lengthRegExp);
+			const widthAspectRatio = width.match(aspectRatioRegExp);
 
 			// height is the second value
 			let height = values[1] || values[0];
 
 			// whether the height matches a length or aspect ratio
-			const heightLength = height.match(lengthRE);
-			const heightAspectRatio = height.match(aspectRatioRE);
+			const heightLength = height.match(lengthRegExp);
+			const heightAspectRatio = height.match(aspectRatioRegExp);
 
-			// if the width is an aspect ratio and the height is a length
+			// conditionally update the width when it is an aspect ratio and the height is a length
 			if (widthAspectRatio && heightLength) {
-				// update the width
 				width = heightLength[1] / widthAspectRatio[2] * widthAspectRatio[1] + heightLength[2];
 			}
 
-			// if the height is an aspect ratio and the width is a length
+			// conditionally update the height when it is an aspect ratio and the width is a length
 			if (heightAspectRatio && widthLength) {
-				// update the height
 				height = widthLength[1] / heightAspectRatio[1] * heightAspectRatio[2] + widthLength[2];
 			}
 
-			// if the width is not a skip token
+			// conditionally create a new width declaration if the width is not a skip token
 			if (width !== skip) {
-				// create a new declaration for the width
 				decl.cloneBefore({
-					prop:  `${ minmax }width`,
+					prop: `${minmax}width`,
 					value: width
 				});
 			}
 
-			// if the height is not a skip token
+			// conditionally create a new height declaration if the height is not a skip token
 			if (height !== skip) {
-				// create a new declaration for the height
 				decl.cloneBefore({
-					prop:  `${ minmax }height`,
+					prop: `${minmax}height`,
 					value: height
 				});
 			}
@@ -79,3 +61,6 @@ module.exports = postcss.plugin('postcss-short-size', (opts) => {
 		});
 	};
 });
+
+const lengthRegExp = /^([-+]?0|[-+]?[0-9]*\.?[0-9]+)(%|\w+)$/;
+const aspectRatioRegExp = /^([-+]?[0-9]*\.?[0-9]+)\/([-+]?[0-9]*\.?[0-9]+)$/;

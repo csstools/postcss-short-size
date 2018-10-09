@@ -1,4 +1,9 @@
-# Changes to Size Shorthand
+# Changes to PostCSS Short Size
+
+### 4.0.0 (October 9, 2018)
+
+- Added: Support for Node 6
+- Added: Support for PostCSS 7
 
 ### 3.0.0 (May 25, 2017)
 
