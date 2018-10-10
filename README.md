@@ -1,188 +1,121 @@
-# Size Shorthand [<img src="https://postcss.github.io/postcss/logo.svg" alt="PostCSS Logo" width="90" height="90" align="right">][postcss]
+# PostCSS Short Size [<img src="https://postcss.github.io/postcss/logo.svg" alt="PostCSS" width="90" height="90" align="right">][postcss]
 
 [![NPM Version][npm-img]][npm-url]
 [![Build Status][cli-img]][cli-url]
-[![Windows Build Status][win-img]][win-url]
-[![Gitter Chat][git-img]][git-url]
+[![Support Chat][git-img]][git-url]
 
-[Size Shorthand] lets you use `size` properties to represent `width` and `height` in CSS, following the [1-to-2 syntax].
+[PostCSS Short Size] lets you use `size` properties to represent `width` and
+`height` in CSS, following the [1-to-2 syntax].
 
-```css
-/* before */
-
-.example-1 {
+```pcss
+.image {
   size: 100px;
 }
 
-.example-2 {
+.video {
   max-size: 400px 300px;
 }
 
-/* after */
+/* becomes */
 
-.example-1 {
+.image {
   width: 100px;
   height: 100px;
 }
 
-.example-2 {
+.video {
   max-width: 400px;
   max-height: 300px;
 }
 ```
 
-Use an aspect ratio to denote the proportion between width and height.
-
-```css
-/* before */
-
-.example-1 {
-  size: 16/9 1080px;
-}
-
-.example-2 {
-  size: 400px 4/3;
-}
-
-/* after */
-
-.example-1 {
-  width: 1920px;
-  height: 1080px;
-}
-
-.example-2 {
-  width: 400px;
-  height: 300px;
-}
-```
-
-Use a skip token (`*`) to ignore specific lengths.
-
-```css
-/* before */
-
-.example-1 {
-  min-size: 1em *;
-  size: * 2.5em;
-}
-
-/* after */
-
-.example-1 {
-  min-width: 1em;
-  height: 2.5em;
-}
-```
-
-## Options
-
-#### `prefix`
-
-Type: `String`  
-Default: `""`
-
-Adds an optional prefix to the `size` property (e.g. `"x"` for `-x-size`). Wrapping dashes (`-`) are automatically applied.
-
-#### `skip`
-
-Type: `String`  
-Default: `"*"`
-
-Specifies the skip token used to ignore a length.
+The supported properties are `size`, `min-size`, and `max-size`.
 
 ## Usage
 
-Add [Size Shorthand] to your build tool:
+Add [PostCSS Short Size] to your project:
 
 ```bash
 npm install postcss-short-size --save-dev
 ```
 
-#### Node
+Use [PostCSS Short Size] to process your CSS:
 
 ```js
-require('postcss-short-size').process(YOUR_CSS, { /* options */ });
+const postcssShortSize = require('postcss-short-size');
+
+postcssShortSize.process(YOUR_CSS /*, processOptions, pluginOptions */);
 ```
 
-#### PostCSS
-
-Add [PostCSS] to your build tool:
-
-```bash
-npm install postcss --save-dev
-```
-
-Load [Size Shorthand] as a PostCSS plugin:
+Or use it as a [PostCSS] plugin:
 
 ```js
+const postcss = require('postcss');
+const postcssShortSize = require('postcss-short-size');
+
 postcss([
-  require('postcss-short-size')({ /* options */ })
-]).process(YOUR_CSS, /* options */);
+  postcssShortSize(/* pluginOptions */)
+]).process(YOUR_CSS /*, processOptions */);
 ```
 
-#### Gulp
+[PostCSS Short Size] runs in all Node environments, with special instructions for:
 
-Add [Gulp PostCSS] to your build tool:
+| [Node](INSTALL.md#node) | [PostCSS CLI](INSTALL.md#postcss-cli) | [Webpack](INSTALL.md#webpack) | [Create React App](INSTALL.md#create-react-app) | [Gulp](INSTALL.md#gulp) | [Grunt](INSTALL.md#grunt) |
+| --- | --- | --- | --- | --- | --- |
 
-```bash
-npm install gulp-postcss --save-dev
-```
+## Options
 
-Enable [Size Shorthand] within your Gulpfile:
+#### prefix
+
+The `prefix` option defines a prefix required by properties being transformed.
+Wrapping dashes are automatically applied, so that `x` would transform
+`-x-margin`.
 
 ```js
-var postcss = require('gulp-postcss');
-
-gulp.task('css', function () {
-  return gulp.src('./src/*.css').pipe(
-    postcss([
-      require('postcss-short-size')({ /* options */ })
-    ])
-  ).pipe(
-    gulp.dest('.')
-  );
-});
+postcssShortSize({ prefix: 'x' });
 ```
 
-#### Grunt
+```pcss
+.image {
+  x-size: 100px;
+}
 
-Add [Grunt PostCSS] to your build tool:
+/* becomes */
 
-```bash
-npm install grunt-postcss --save-dev
+.image {
+  width: 100px;
+  height: 100px;
+}
 ```
 
-Enable [Size Shorthand] within your Gruntfile:
+#### skip
+
+The `skip` option defines the skip token used to ignore portions of the
+shorthand.
 
 ```js
-grunt.loadNpmTasks('grunt-postcss');
-
-grunt.initConfig({
-  postcss: {
-    options: {
-      use: [
-        require('postcss-short-size')({ /* options */ })
-      ]
-    },
-    dist: {
-      src: '*.css'
-    }
-  }
-});
+postcssShortSize({ skip: '-' });
 ```
 
-[npm-url]: https://www.npmjs.com/package/postcss-short-size
-[npm-img]: https://img.shields.io/npm/v/postcss-short-size.svg
-[cli-url]: https://travis-ci.org/jonathantneal/postcss-short-size
+```pcss
+.image {
+  size: - 100px;
+}
+
+/* becomes */
+
+.image {
+  height: 100px;
+}
+```
+
 [cli-img]: https://img.shields.io/travis/jonathantneal/postcss-short-size.svg
-[win-url]: https://ci.appveyor.com/project/jonathantneal/postcss-short-size
-[win-img]: https://img.shields.io/appveyor/ci/jonathantneal/postcss-short-size.svg
+[cli-url]: https://travis-ci.org/jonathantneal/postcss-short-size
+[git-img]: https://img.shields.io/badge/support-chat-blue.svg
 [git-url]: https://gitter.im/postcss/postcss
-[git-image]: https://img.shields.io/badge/chat-gitter-blue.svg
+[npm-img]: https://img.shields.io/npm/v/postcss-short-size.svg
+[npm-url]: https://www.npmjs.com/package/postcss-short-size
 
-[Size Shorthand]: https://github.com/jonathantneal/postcss-short-size
-[PostCSS]: https://github.com/postcss/postcss
-[Gulp PostCSS]: https://github.com/postcss/gulp-postcss
-[Grunt PostCSS]: https://github.com/nDmitry/grunt-postcss
 [1-to-2 syntax]: https://developer.mozilla.org/en-US/docs/Web/CSS/Shorthand_properties#Tricky_edge_cases
+[PostCSS]: https://github.com/postcss/postcss
+[PostCSS Short Size]: https://github.com/jonathantneal/postcss-short-size

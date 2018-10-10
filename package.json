@@ -1,49 +1,57 @@
 {
   "name": "postcss-short-size",
-  "version": "3.0.0",
-  "description": "Write shorthand size properties in CSS",
+  "version": "4.0.0",
+  "description": "Use this in CSS",
   "author": "Jonathan Neal <jonathantneal@hotmail.com>",
   "license": "CC0-1.0",
   "repository": "jonathantneal/postcss-short-size",
   "homepage": "https://github.com/jonathantneal/postcss-short-size#readme",
   "bugs": "https://github.com/jonathantneal/postcss-short-size/issues",
-  "main": "index.js",
+  "main": "index.cjs.js",
+  "module": "index.es.mjs",
   "files": [
-    "index.js"
+    "index.cjs.js",
+    "index.cjs.js.map",
+    "index.es.mjs",
+    "index.es.mjs.map"
   ],
   "scripts": {
-    "clean": "git clean -X -d -f",
-    "prepublish": "npm test",
+    "prepublishOnly": "npm test",
+    "pretest": "rollup -c .rollup.js --silent",
     "test": "echo 'Running tests...'; npm run test:js && npm run test:tape",
-    "test:js": "eslint *.js --cache --ignore-pattern .gitignore",
+    "test:js": "eslint *.js --cache --ignore-path .gitignore --quiet",
     "test:tape": "postcss-tape"
   },
   "engines": {
-    "node": ">=4"
+    "node": ">=6.0.0"
   },
   "dependencies": {
-    "postcss": "^6.0.1"
+    "postcss": "^7.0.5"
   },
   "devDependencies": {
-    "eslint": "^3.19.0",
-    "eslint-config-dev": "2.0.0",
-    "postcss-tape": "2.0.1",
-    "pre-commit": "^1.2.2"
+    "@babel/core": "^7.1.2",
+    "@babel/plugin-syntax-dynamic-import": "^7.0.0",
+    "@babel/preset-env": "^7.1.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.6.1",
+    "eslint-config-dev": "^2.0.0",
+    "postcss-tape": "^2.2.0",
+    "pre-commit": "^1.2.2",
+    "rollup": "^0.66.5",
+    "rollup-plugin-babel": "^4.0.3"
   },
   "eslintConfig": {
-    "extends": "dev"
+    "extends": "dev",
+    "parser": "babel-eslint"
   },
   "keywords": [
     "postcss",
     "css",
     "postcss-plugin",
-    "omits",
-    "shorthands",
-    "margins",
-    "paddings",
-    "properties",
-    "property",
-    "aspects",
-    "ratios"
+    "size",
+    "short",
+    "shorthand",
+    "width",
+    "height"
   ]
 }
